@@ -4,7 +4,7 @@ Ce dossier est le cœur insurrectionnel du Fractal Cosmos Challenge. Ici, nous t
 
 ## Contenu Actuel
 - `paris_mai_2025_guide.md` : Guide pour prévoir la révolte à Paris (mai 2025).  
-- (À venir) `nairobi_2025_guide.md`, `effondrement_2028_strategie.md`.
+- (À venir) `usa_2025_guide.md`, `effondrement_2028_strategie.md`.
 
 ## Comment Contribuer
 - **Activistes/Révoltés** : Partagez vos stratégies pour les crises prédites (2025–2028).  
