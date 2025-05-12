@@ -3,8 +3,10 @@
 Ce dossier contient les visualisations interactives pour donner vie au logos fractal. Le Visuel V.1 (cascade fractale 2025–2030) montre les pulsations humaines (θ_n(t), T(t)) et les crises à venir – un outil pour les révoltés et les scientifiques !
 
 ## Contenu Actuel
-- (À venir) `cascade_2025_2030.html` : Visualisation interactive des pulsations (Plotly).  
-- (À venir) Graphiques statiques (ex. pulsations_2025_2030.png).
+- `cascade_2025_2030.html` : Visualisation interactive des pulsations (Plotly).  
+- `generate_cascade.py` : Script pour générer le Visuel V.1.  
+  - Exécutez avec : `python generate_cascade.py`.  
+  - Dépendances : Plotly, NumPy, pandas.
 
 ## Comment Contribuer
 - **Data Scientists/Designers** : Créez des visualisations (ex. θ_n(t) pour 2025–2030).  
