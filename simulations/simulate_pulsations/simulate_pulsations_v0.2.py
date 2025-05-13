@@ -21,7 +21,13 @@ omega_cosmic = 1e-18  # Fréquence cosmique (Chapitre III, section 1.2)
 
 # Charger les données sociales (ex. hashtags)
 try:
-    df = pd.read_csv("data/social/france_hashtags_2024.csv")
+    import os
+
+# Chemin absolu du répertoire contenant le script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Remonter de deux niveaux (simulations/simulate_pulsations -> FractalCosmoChallenge) et aller dans data/social
+data_path = os.path.join(script_dir, "../../data/social/france_hashtags_2024.csv")
+df = pd.read_csv(data_path)
     print("Données chargées avec succès :")
     print(df.head())
     print("Colonnes disponibles :", df.columns.tolist())
