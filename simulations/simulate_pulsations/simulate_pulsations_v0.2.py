@@ -3,21 +3,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.interpolate import interp1d
 
-# Paramètres
-kappa = 1e-3  # Constante de rappel (1/s^2)
-eta_0 = 0.005  # Couplage initial
-chi = 0.5  # Influence de X(t)
-alpha = 0.01  # Amplitude des fluctuations fractales
-beta = 0.1  # Couplage T(t) et θ_n(t)
-X_t = 1.5  # Amplification par X (2025)
-gamma = 0.1  # Coefficient d’amortissement (1/s)
-mentions_max = 10000  # Valeur maximale des mentions pour normalisation
+# Paramètres ajustés
+kappa = 0.1  # Constante de rappel (augmentée pour des oscillations plus rapides)
+eta_0 = 0.1  # Couplage initial (augmenté pour un impact plus fort)
+chi = 1.0  # Influence de X(t) (augmentée)
+alpha = 0.1  # Amplitude des fluctuations fractales (augmentée)
+beta = 0.2  # Couplage T(t) et θ_n(t) (augmenté)
+X_t = 2.0  # Amplification par X (augmentée)
+gamma = 0.01  # Amortissement (nouveau, pour stabiliser les oscillations)
+t = np.linspace(0, 5, 1000)  # Temps (2025–2030, 5 ans)
+dt = t[1] - t[0]  # Pas de temps
 
-# Définir le temps en années et en secondes
-t_years = np.linspace(0, 5, 1000)  # 0 à 5 ans (2025-2030)
-seconds_per_year = 365.25 * 24 * 3600
-t_seconds = t_years * seconds_per_year
-dt = t_seconds[1] - t_seconds[0]  # Pas de temps en secondes
+# Fréquences multi-échelles pour delta_fractal
+f_human = 1 / (365.25 * 24 * 3600)  # Fréquence humaine ~ 10^-7 Hz (période 1 an)
+omega_human = 2 * np.pi * f_human  # Convertir en rad/s
+omega_cosmic = 1e-18  # Fréquence cosmique (Chapitre III, section 1.2)
 
 # Charger les données sociales (ex. hashtags)
 try:
@@ -29,6 +29,7 @@ try:
 except Exception as e:
     print("Erreur lors du chargement des données :", str(e))
     print("Données non trouvées, utilisation de mentions simulées.")
+    # Simuler des données si nécessaire
     dates = pd.date_range(start="2024-01-01", end="2024-01-04", freq="D")
     df = pd.DataFrame({
         "date": dates,
@@ -36,42 +37,60 @@ except Exception as e:
         "mentions": [5000, 5200, 3000, 3100]
     })
 
-# Préparer les données des mentions
+# Préparer les données des mentions pour η(t) et la visualisation
 df['date'] = pd.to_datetime(df['date'])
 df['years_since_2024'] = (df['date'] - pd.to_datetime("2024-01-01")).dt.total_seconds() / (365.25 * 24 * 60 * 60)
 retraites = df[df['hashtag'] == "#retraites"]
 carburant = df[df['hashtag'] == "#carburant"]
 
 # Interpolation des mentions sur la période 2025-2030
+mentions_max = 10000  # Valeur maximale pour normalisation
 if len(retraites) > 1:
     interp_retraites = interp1d(retraites['years_since_2024'], retraites['mentions'], kind='linear', fill_value="extrapolate")
-    mentions_retraites = interp_retraites(t_years + 1)  # t + 1 car 2025 est 1 an après 2024
+    mentions_retraites = interp_retraites(t + 1)  # t + 1 car 2025 est 1 an après 2024
 else:
-    mentions_retraites = retraites['mentions'].iloc[0] * np.ones(len(t_years))
+    mentions_retraites = retraites['mentions'].iloc[0] * np.ones(len(t))
+
 if len(carburant) > 1:
     interp_carburant = interp1d(carburant['years_since_2024'], carburant['mentions'], kind='linear', fill_value="extrapolate")
-    mentions_carburant = interp_carburant(t_years + 1)
+    mentions_carburant = interp_carburant(t + 1)
 else:
-    mentions_carburant = carburant['mentions'].iloc[0] * np.ones(len(t_years))
+    mentions_carburant = carburant['mentions'].iloc[0] * np.ones(len(t))
 
-# Calcul de eta_t dynamique
-eta_t = eta_0 * (1 + chi * X_t) * (1 + (mentions_retraites + mentions_carburant) / mentions_max)
+# Calcul de η(t) dynamique basé sur les mentions
+eta_t = eta_0 * (1 + chi * X_t) * (1 + (mentions_retraites + mentions_carburant) / (2 * mentions_max))
 
-# Fluctuations fractales avec spectre P(f) ∝ f^{-2}
-N = 100
-f_min = 1.59e-19  # Hz (correspond à ω ≈ 10^{-18} rad/s)
-f_max = 1e-7  # Hz (échelles humaines)
-f_n = f_min * (f_max / f_min)**(np.arange(N) / (N - 1))
-omega_n = 2 * np.pi * f_n
-a_n = alpha / f_n
-delta_fractal = np.zeros_like(t_seconds)
-for n in range(N):
-    delta_fractal += a_n[n] * np.sin(omega_n[n] * t_seconds)
+# Fluctuations fractales avec multi-échelles
+delta_fractal = np.zeros(len(t))
+for n in range(1, 100):
+    # Combiner fréquences humaines et cosmiques
+    omega_n = omega_human / n + omega_cosmic  # Fréquences décroissantes pour spectre fractal
+    delta_fractal += alpha * np.sin(omega_n * t * 365.25 * 24 * 3600) / (n**2)  # t en secondes
 
 # Calcul de θ_n(t) avec amortissement
-theta_n = np.zeros(len(t_seconds))
-v_n = npotropinés", linestyle="--", color="green")
-plt.plot(t_years + 2025, mentions_carburant / mentions_max * 0.03, label="Mentions #carburant (normalisées)", linestyle="--", color="orange")
+theta_n = np.zeros(len(t))
+dtheta_n = np.zeros(len(t))  # Vitesse pour méthode d'intégration
+theta_n[0] = 0.019  # Condition initiale (ex. Haïti 1791)
+dtheta_n[0] = 0.0  # Vitesse initiale
+for i in range(1, len(t)):
+    # Équation avec amortissement : d²θ/dt² + γ dθ/dt + κ θ = η(t) δ_fractal
+    d2_theta = -kappa * theta_n[i-1] - gamma * dtheta_n[i-1] + eta_t[i-1] * delta_fractal[i-1]
+    dtheta_n[i] = dtheta_n[i-1] + d2_theta * dt
+    theta_n[i] = theta_n[i-1] + dtheta_n[i] * dt
+
+# Calcul de T(t)
+T_t = beta * theta_n
+
+# Sauvegarde des données
+np.savetxt("theta_n.txt", theta_n)
+np.savetxt("T_t.txt", T_t)
+
+# Visualisation
+plt.figure(figsize=(10, 6))
+plt.plot(t + 2025, theta_n, label="θ_n(t) (Pulsations Humaines)", color="blue")
+plt.plot(t + 2025, T_t, label="T(t) (Lutte de Classes)", color="red")
+plt.plot(t + 2025, mentions_retraites / mentions_max * 0.03, label="Mentions #retraites (normalisées)", linestyle="--", color="green")
+plt.plot(t + 2025, mentions_carburant / mentions_max * 0.03, label="Mentions #carburant (normalisées)", linestyle="--", color="orange")
 plt.xlabel("Année")
 plt.ylabel("Amplitude")
 plt.title("Pulsations Fractales 2025–2030 avec Données Sociales")
