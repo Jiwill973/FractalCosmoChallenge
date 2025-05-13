@@ -14,14 +14,15 @@ t = np.linspace(0, 5, 1000)  # Temps (2025–2030, 5 ans)
 
 # Charger les données sociales (ex. hashtags)
 try:
-    data = pd.read_csv("../data/social/france_hashtags_2024.csv")
-    mentions = data[data["hashtag"] == "#retraites"]["mentions"].values
-    mentions = np.interp(t, np.linspace(0, 5, len(mentions)), mentions)  # Interpolation
-    mentions_max = mentions.max() or 1  # Éviter la division par 0
-except FileNotFoundError:
+    df = pd.read_csv("data/social/france_hashtags_2024.csv")
+    print("Données chargées avec succès :")
+    print(df.head())
+    print("Colonnes disponibles :", df.columns.tolist())
+    print("Nombre de lignes :", len(df))
+except Exception as e:
+    print("Erreur lors du chargement des données :", str(e))
     print("Données non trouvées, utilisation de mentions simulées.")
-    mentions = np.ones(len(t)) * 5000  # Valeur par défaut
-    mentions_max = 5000
+    # Code pour données simulées
 
 # Fluctuations fractales
 delta_fractal = np.zeros(len(t))
