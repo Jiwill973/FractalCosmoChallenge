@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.interpolate import interp1d
 
 # Paramètres
 kappa = 1e-3  # Constante de rappel
@@ -37,7 +38,7 @@ for n in range(1, 100):
 
 # Calcul de θ_n(t) avec η(t) ajusté dynamiquement
 theta_n = np.zeros(len(t))
-mentions = df['mentions'].mean()  # Utilise la moyenne des mentions
+mentions = df['mentions'].mean()  # Utilise la moyenne des mentions pour η(t)
 mentions_max = 10000  # Valeur maximale des mentions pour normalisation
 eta_t = eta_0 * (1 + chi * X_t) * (1 + mentions / mentions_max)  # Ajustement par mentions (scalaire)
 dt = t[1] - t[0]
@@ -53,13 +54,37 @@ T_t = beta * theta_n
 np.savetxt("theta_n.txt", theta_n)
 np.savetxt("T_t.txt", T_t)
 
+# Préparer les données des mentions pour la visualisation
+df['date'] = pd.to_datetime(df['date'])
+# Convertir les dates en années fractionnaires depuis 2024
+df['years_since_2024'] = (df['date'] - pd.to_datetime("2024-01-01")).dt.total_seconds() / (365.25 * 24 * 60 * 60)
+# Séparer les hashtags
+retraites = df[df['hashtag'] == "#retraites"]
+carburant = df[df['hashtag'] == "#carburant"]
+# Interpolation des mentions sur la période 2025-2030
+# Pour #retraites
+if len(retraites) > 1:
+    interp_retraites = interp1d(retraites['years_since_2024'], retraites['mentions'], kind='linear', fill_value="extrapolate")
+    mentions_retraites = interp_retraites(t + 1)  # t + 1 car 2025 est 1 an après 2024
+else:
+    mentions_retraites = retraites['mentions'].iloc[0] * np.ones(len(t))
+# Pour #carburant
+if len(carburant) > 1:
+    interp_carburant = interp1d(carburant['years_since_2024'], carburant['mentions'], kind='linear', fill_value="extrapolate")
+    mentions_carburant = interp_carburant(t + 1)
+else:
+    mentions_carburant = carburant['mentions'].iloc[0] * np.ones(len(t))
+
 # Visualisation
-plt.plot(t + 2025, theta_n, label="θ_n(t) (Pulsations Humaines)")
-plt.plot(t + 2025, T_t, label="T(t) (Lutte de Classes)")
-plt.plot(t + 2025, mentions / mentions_max * 0.03 * np.ones(len(t)), label="Mentions #retraites (normalisées)", linestyle="--")
+plt.figure(figsize=(10, 6))
+plt.plot(t + 2025, theta_n, label="θ_n(t) (Pulsations Humaines)", color="blue")
+plt.plot(t + 2025, T_t, label="T(t) (Lutte de Classes)", color="red")
+plt.plot(t + 2025, mentions_retraites / mentions_max * 0.03, label="Mentions #retraites (normalisées)", linestyle="--", color="green")
+plt.plot(t + 2025, mentions_carburant / mentions_max * 0.03, label="Mentions #carburant (normalisées)", linestyle="--", color="orange")
 plt.xlabel("Année")
 plt.ylabel("Amplitude")
 plt.title("Pulsations Fractales 2025–2030 avec Données Sociales")
 plt.legend()
+plt.grid(True)
 plt.savefig("pulsations_2025_2030_with_data.png")
 plt.show()
