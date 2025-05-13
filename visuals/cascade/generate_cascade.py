@@ -8,7 +8,7 @@ t = np.linspace(0, 5, 1000) + 2025  # Années 2025–2030
 theta_n = np.loadtxt("theta_n.txt")  # Supposons que θ_n(t) est sauvegardé
 T_t = np.loadtxt("T_t.txt")  # Supposons que T(t) est sauvegardé
 try:
-    data = pd.read_csv("../data/social/france_hashtags_2024.csv")
+    data = pd.read_csv("../../data/social/france_hashtags_2024.csv")
     mentions = data[data["hashtag"] == "#retraites"]["mentions"].values
     mentions = np.interp(np.linspace(0, 5, 1000), np.linspace(0, 5, len(mentions)), mentions)
     mentions_max = mentions.max() or 1
