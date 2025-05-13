@@ -1,4 +1,5 @@
-3.799999999999999992e-03
+simulate_pulsations_results_v0.2
+https://github.com/Jiwill973/FractalCosmoChallenge/tree/main/simulations/simulate_pulsations/simulate_pulsations_results_v0.23.799999999999999992e-03
 3.799990480971461929e-03
 3.800010674202809833e-03
 3.800100086880496553e-03
