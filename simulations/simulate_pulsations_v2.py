@@ -43,7 +43,7 @@ eta_t = eta_0 * (1 + chi * X_t) * (1 + mentions / mentions_max)  # Ajustement pa
 dt = t[1] - t[0]
 theta_n[0] = 0.019  # Condition initiale (ex. Haïti 1791)
 for i in range(1, len(t)):
-    d2_theta = -kappa * theta_n[i-1] + eta_t * delta_fractal[i-1]  # eta_t est un scalaire, pas besoin de [i]
+    d2_theta = -kappa * theta_n[i-1] + eta_t * delta_fractal[i-1]  # eta_t est un scalaire
     theta_n[i] = theta_n[i-1] + d2_theta * dt**2
 
 # Calcul de T(t)
@@ -56,4 +56,10 @@ np.savetxt("T_t.txt", T_t)
 # Visualisation
 plt.plot(t + 2025, theta_n, label="θ_n(t) (Pulsations Humaines)")
 plt.plot(t + 2025, T_t, label="T(t) (Lutte de Classes)")
-plt.plot(t + 2025, mentions / mentions_max * 0.03 * np.ones(len(t)), label="Mentions #retraites
+plt.plot(t + 2025, mentions / mentions_max * 0.03 * np.ones(len(t)), label="Mentions #retraites (normalisées)", linestyle="--")
+plt.xlabel("Année")
+plt.ylabel("Amplitude")
+plt.title("Pulsations Fractales 2025–2030 avec Données Sociales")
+plt.legend()
+plt.savefig("pulsations_2025_2030_with_data.png")
+plt.show()
