@@ -22,7 +22,13 @@ try:
 except Exception as e:
     print("Erreur lors du chargement des données :", str(e))
     print("Données non trouvées, utilisation de mentions simulées.")
-    # Code pour données simulées
+    # Simuler des données si nécessaire
+    dates = pd.date_range(start="2024-01-01", end="2024-01-04", freq="D")
+    df = pd.DataFrame({
+        "date": dates,
+        "hashtag": ["#retraites", "#retraites", "#carburant", "#carburant"],
+        "mentions": [5000, 5200, 3000, 3100]
+    })
 
 # Fluctuations fractales
 delta_fractal = np.zeros(len(t))
@@ -32,25 +38,22 @@ for n in range(1, 100):
 # Calcul de θ_n(t) avec η(t) ajusté dynamiquement
 theta_n = np.zeros(len(t))
 mentions = df['mentions'].mean()  # Utilise la moyenne des mentions
-mentions = df['mentions'].mean()  # Utilise la moyenne des mentions
 mentions_max = 10000  # Valeur maximale des mentions pour normalisation
-eta_t = eta_0 * (1 + chi * X_t) * (1 + mentions / mentions_max)  # Ajustement par mentions
+eta_t = eta_0 * (1 + chi * X_t) * (1 + mentions / mentions_max)  # Ajustement par mentions (scalaire)
 dt = t[1] - t[0]
 theta_n[0] = 0.019  # Condition initiale (ex. Haïti 1791)
 for i in range(1, len(t)):
-    d2_theta = -kappa * theta_n[i-1] + eta_t[i] * delta_fractal[i-1]
+    d2_theta = -kappa * theta_n[i-1] + eta_t * delta_fractal[i-1]  # eta_t est un scalaire, pas besoin de [i]
     theta_n[i] = theta_n[i-1] + d2_theta * dt**2
 
 # Calcul de T(t)
 T_t = beta * theta_n
 
+# Sauvegarde des données
+np.savetxt("theta_n.txt", theta_n)
+np.savetxt("T_t.txt", T_t)
+
 # Visualisation
 plt.plot(t + 2025, theta_n, label="θ_n(t) (Pulsations Humaines)")
 plt.plot(t + 2025, T_t, label="T(t) (Lutte de Classes)")
-plt.plot(t + 2025, mentions / mentions_max * 0.03, label="Mentions #retraites (normalisées)", linestyle="--")
-plt.xlabel("Année")
-plt.ylabel("Amplitude")
-plt.title("Pulsations Fractales 2025–2030 avec Données Sociales")
-plt.legend()
-plt.savefig("pulsations_2025_2030_with_data.png")
-plt.show()
+plt.plot(t + 2025, mentions / mentions_max * 0.03 * np.ones(len(t)), label="Mentions #retraites
