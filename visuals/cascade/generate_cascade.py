@@ -5,8 +5,8 @@ from plotly.subplots import make_subplots
 
 # Charger les données simulées (ou réelles)
 t = np.linspace(0, 5, 1000) + 2025  # Années 2025–2030
-theta_n = np.loadtxt("../../simulations/simulate_pulsations/simulate_pulsations_results/theta_n.txt")  # Supposons que θ_n(t) est sauvegardé
-T_t = np.loadtxt("../../simulations/simulate_pulsations/simulate_pulsations_results/T_t.txt")  # Supposons que T(t) est sauvegardé
+theta_n = np.loadtxt("../../simulations/simulate_pulsations/simulate_pulsations_results_v0.2/theta_n.txt")  # Supposons que θ_n(t) est sauvegardé
+T_t = np.loadtxt("../../simulations/simulate_pulsations/simulate_pulsations_results_v0.2/T_t.txt")  # Supposons que T(t) est sauvegardé
 try:
     data = pd.read_csv("../../data/social/france_hashtags_2024.csv")
     mentions = data[data["hashtag"] == "#retraites"]["mentions"].values
