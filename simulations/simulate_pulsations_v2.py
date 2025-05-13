@@ -32,7 +32,7 @@ for n in range(1, 100):
 # Calcul de θ_n(t) avec η(t) ajusté dynamiquement
 theta_n = np.zeros(len(t))
 mentions = df['mentions'].mean()  # Utilise la moyenne des mentions
-eta_t = eta_0 * (1 + chi * X_t) * (1 + df['mentions'] / mentions_max)  # Ajustement par mentions
+eta_t = eta_0 * (1 + chi * X_t) * (1 + mentions / mentions_max)  # Ajustement par mentions
 dt = t[1] - t[0]
 theta_n[0] = 0.019  # Condition initiale (ex. Haïti 1791)
 for i in range(1, len(t)):
