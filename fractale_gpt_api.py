@@ -6,6 +6,9 @@ import base64
 from pydantic import BaseModel
 
 app = FastAPI()
+@app.get("/test")
+async def test():
+    return {"message": "Test OK"}
 
 # Table MDF
 mdf_principles = [
@@ -154,5 +157,4 @@ async def create_issue(request: IssueCreateRequest):
             return {"message": f"Issue created: {request.title}"}
         except httpx.HTTPStatusError as e:
             return {"error": f"GitHub API error: {str(e)}"}
-
 
