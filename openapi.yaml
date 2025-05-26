@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: FractaleGPT API
+  version: 1.0.0
+servers:
+  - url: https://localhost:8000
+    description: Local development server (HTTPS)
+paths:
+  /mdf-principles:
+    get:
+      summary: Get MDF principles
+      operationId: getMdfPrinciples
+      responses:
+        "200":
+          description: List of MDF principles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    principle: {type: string}
+                    expression: {type: string}
+                    subspiral: {type: string}
+  /github/repo/files:
+    get:
+      summary: List files in a GitHub repo
+      operationId: getRepoFiles
+      parameters:
+        - name: owner
+          in: query
+          required: true
+          schema: {type: string}
+        - name: repo
+          in: query
+          required: true
+          schema: {type: string}
+      responses:
+        "200":
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {type: object}
+  /github/file/read:
+    get:
+      summary: Read a file from a GitHub repo
+      operationId: readRepoFile
+      parameters:
+        - name: owner
+          in: query
+          required: true
+          schema: {type: string}
+        - name: repo
+          in: query
+          required: true
+          schema: {type: string}
+        - name: path
+          in: query
+          required: true
+          schema: {type: string}
+      responses:
+        "200":
+          description: File content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  path: {type: string}
+                  content: {type: string}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
