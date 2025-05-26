@@ -3,7 +3,7 @@ info:
   title: FractaleGPT API
   version: 1.0.0
 servers:
-  - url: https://localhost:8000
+  - url: https://fractal-gpt.onrender.com
     description: Local development server (HTTPS)
 paths:
   /mdf-principles:
