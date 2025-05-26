@@ -6,7 +6,7 @@ import base64
 from pydantic import BaseModel
 
 app = FastAPI()
-@app.get("/test")
+@app.get("/https://fractal-gpt.onrender.com")
 async def test():
     return {"message": "Test OK"}
 
