@@ -6,9 +6,9 @@ import base64
 from pydantic import BaseModel
 
 app = FastAPI()
-@app.get("/https://fractal-gpt.onrender.com")
-async def test():
-    return {"message": "Test OK"}
+@app.get("/")
+async def root():
+    return {"message": "FractalGPT API is alive!"}
 
 # Table MDF
 mdf_principles = [
