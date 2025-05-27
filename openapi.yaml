@@ -1,80 +1,94 @@
 openapi: 3.1.0
 info:
-  title: FractaleGPT API
+  title: FractalGPT API
   version: 1.0.0
+  description: API fractale pour GitHub et MDF (Méthodologie Dialectique Fractale)
 servers:
-  - url: https://fractal-gpt.onrender.com
-    description: Local development server (HTTPS)
+  - url: http://127.0.0.1:8000
+    description: Serveur local
+components:
+  securitySchemes:
+    githubAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://github.com/login/oauth/authorize
+          tokenUrl: https://github.com/login/oauth/access_token
+          scopes:
+            repo: Accès complet aux dépôts publics et privés
+            write:discussion: Écrire et gérer les discussions
+            admin:repo_hook: Contrôle total des hooks du référentiel
+            admin:org: Contrôle total des organisations et des équipes
+            admin:enterprise: Accès complet à l'entreprise
+            admin:gpg_key: Contrôle des clés GPG des utilisateurs
+            admin:public_key: Contrôle des clés publiques des utilisateurs
+            admin:org_hook: Contrôle des hooks organisationnels
+            read:org: Lire les informations de l'organisation
+            read:packages: Lire les paquets
+            write:packages: Écrire dans les paquets
+            delete:packages: Supprimer les paquets
+            read:discussion: Lire les discussions
+            admin:ssh_signing_key: Contrôle des clés SSH de signature
+security:
+  - githubAuth:
+      - repo
+      - write:discussion
+      - admin:repo_hook
+      - admin:org
+      - admin:enterprise
+      - admin:gpg_key
+      - admin:public_key
+      - admin:org_hook
+      - read:org
+      - read:packages
+      - write:packages
+      - delete:packages
+      - read:discussion
+      - admin:ssh_signing_key
 paths:
-  /mdf-principles:
-    get:
-      summary: Get MDF principles
-      operationId: getMdfPrinciples
-      responses:
-        "200":
-          description: List of MDF principles
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    principle: {type: string}
-                    expression: {type: string}
-                    subspiral: {type: string}
   /github/repo/files:
     get:
-      summary: List files in a GitHub repo
-      operationId: getRepoFiles
+      summary: Liste les fichiers d'un dépôt GitHub
       parameters:
         - name: owner
           in: query
           required: true
-          schema: {type: string}
+          schema: { type: string }
         - name: repo
           in: query
           required: true
-          schema: {type: string}
+          schema: { type: string }
       responses:
-        "200":
-          description: List of files
+        '200':
+          description: Liste des fichiers
           content:
             application/json:
               schema:
                 type: array
-                items: {type: object}
+                items: { type: object }
   /github/file/read:
     get:
-      summary: Read a file from a GitHub repo
-      operationId: readRepoFile
+      summary: Lire un fichier spécifique dans un dépôt
       parameters:
         - name: owner
           in: query
           required: true
-          schema: {type: string}
+          schema: { type: string }
         - name: repo
           in: query
           required: true
-          schema: {type: string}
+          schema: { type: string }
         - name: path
           in: query
           required: true
-          schema: {type: string}
+          schema: { type: string }
       responses:
-        "200":
-          description: File content
+        '200':
+          description: Contenu du fichier
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  path: {type: string}
-                  content: {type: string}
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-security:
-  - bearerAuth: []
+                  path: { type: string }
+                  content: { type: string }
