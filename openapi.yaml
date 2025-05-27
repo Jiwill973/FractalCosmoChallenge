@@ -3,10 +3,15 @@ info:
   title: FractalGPT API
   version: 1.0.0
   description: API fractale pour GitHub et MDF (Méthodologie Dialectique Fractale)
+
 servers:
+  - url: https://fractal-gpt.onrender.com
+    description: Serveur Render (production)
   - url: http://127.0.0.1:8000
-    description: Serveur local
+    description: Serveur local (dev)
+
 components:
+  schemas: {}
   securitySchemes:
     githubAuth:
       type: oauth2
@@ -29,6 +34,7 @@ components:
             delete:packages: Supprimer les paquets
             read:discussion: Lire les discussions
             admin:ssh_signing_key: Contrôle des clés SSH de signature
+
 security:
   - githubAuth:
       - repo
@@ -45,9 +51,11 @@ security:
       - delete:packages
       - read:discussion
       - admin:ssh_signing_key
+
 paths:
   /github/repo/files:
     get:
+      operationId: listRepoFiles
       summary: Liste les fichiers d'un dépôt GitHub
       parameters:
         - name: owner
@@ -66,8 +74,10 @@ paths:
               schema:
                 type: array
                 items: { type: object }
+
   /github/file/read:
     get:
+      operationId: readRepoFile
       summary: Lire un fichier spécifique dans un dépôt
       parameters:
         - name: owner
