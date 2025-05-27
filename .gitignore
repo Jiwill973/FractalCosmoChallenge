@@ -1,3 +1,5 @@
+.env
+uvicorn.log
 cert.pem
 key.pem
 __pycache__/
