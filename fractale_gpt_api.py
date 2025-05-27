@@ -107,7 +107,3 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run("fractale_gpt_api:app", host="0.0.0.0", port=port, reload=True)
-<<<<<<< HEAD
-=======
-    
->>>>>>> 19de5398f158f5db52f2ae13e19e10ce4196c54c
